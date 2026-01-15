@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart'; // 匯入 Flutter 套件
+import 'feedPage.dart';
+import 'historyPage.dart';
 
 // main function
 void main() {
   //debugPaintSizeEnabled = true;
   runApp(const MainApp());
 }
+
 
 // StatelessWidget = 無狀態元件: 不會有變化
 class MainApp extends StatelessWidget { 
@@ -23,8 +26,12 @@ class MainApp extends StatelessWidget {
         canvasColor: const Color.fromARGB(255, 248, 232, 187), 
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            foregroundColor: const Color.fromARGB(255, 64, 63, 59),
-            backgroundColor: const Color.fromARGB(255, 250, 227, 156),
+            foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+            backgroundColor: const Color.fromARGB(255, 99, 93, 76),
+            textStyle: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
             elevation: 5,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -76,10 +83,29 @@ class _MyHomePageState extends State<HomePage> {
                   context,
                   MaterialPageRoute(builder: (context) => const FeedPiggyPage(title: 'Records Page')),
                 );
-              },
-              child: const Text('點我開始餵豬', style: TextStyle(fontSize: 18)),
+              },            
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(223, 248, 197, 197), // 橘色系按鈕
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text('點我開始餵BABUY吃', style: TextStyle(fontSize: 18),),
             ),
-
+            ElevatedButton(
+              onPressed: () {
+                // 【關鍵代碼】：切換到紀錄頁面
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HistoryPage(title: 'History Page')),
+                );
+              },            
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 222, 175, 132), // 橘色系按鈕
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text('點我看BABUY吃過的', style: TextStyle(fontSize: 18),),
+            ),
           ],
         ),
       ),
@@ -87,150 +113,9 @@ class _MyHomePageState extends State<HomePage> {
   }
 }
 
-class FeedPiggyPage extends StatefulWidget {
-  final String title;
-  // homepage 組件的「身分證登記」, required this.title 表示 title 是必須提供的參數
-  const FeedPiggyPage({super.key, required this.title});
-  
-  @override
-  _FeedPiggyPageState createState() => _FeedPiggyPageState();
-}
 
-class Record {
-  final String title;
-  final String time;
-  final String category;
-  final int amount;
 
-  Record({required this.title, required this.time, required this.category, required this.amount});
-}
 
-class _FeedPiggyPageState extends State<FeedPiggyPage> {
-  
-  final List<Record> _records = [];
-
-  // 2. 建立控制器，用來抓取輸入框裡的文字
-  final TextEditingController _textController = TextEditingController();
-  final Set<String> _categories = {'餐飲', '交通', '購物', '娛樂', '其他'};
-  DateTime _selectedDate = DateTime.now(); // 預設為今天
-  String _selectedCategory = '餐飲';
-  void _addRecord() {
-    // 檢查輸入框是否為空
-    if (_textController.text.isEmpty) return;
-
-    setState(() {
-      // 3. 把新資料加進清單
-      _records.add(Record(
-        title: _textController.text,
-        time: DateTime.now().toString().substring(0, 16), // 抓取現在時間
-        category: _selectedCategory,
-        amount: 0,
-      ));
-    });
-
-    _textController.clear(); // 新增完後清空輸入框
-  }
-
-    // 開啟日期選擇器
-  Future<void> _pickDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,      // 初始顯示日期
-      firstDate: DateTime(2020),      // 允許選擇的最早日期
-      lastDate: DateTime(2030),       // 允許選擇的最晚日期
-    );
-
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked; // 更新選中的日期
-      });
-    }
-}
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
-      body: Column(
-        children: [
-          // 上方輸入區
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Row(
-              children: [
-                const SizedBox(width: 90, child: Text('消費項目：', style: TextStyle(fontSize: 16))), // 固定標籤寬度
-                SizedBox(
-                  width: 280, // 【精確調整寬度】
-                  height: 45, // 【精確調整高度】
-                  child: TextField(
-                    controller: _textController,
-                    decoration: const InputDecoration(
-                      isDense: true,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      hintText: '例如：好吃蘿蔔糕',
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color.fromARGB(255, 97, 85, 67), width: 2.0),
-                      ),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0), // 設定左右間距
-            child: Row(
-              children: [
-                const SizedBox(width: 90, child: Text('消費類別：',style: TextStyle(fontSize: 16))),
-                Container(
-                  width: 280, // 調整到跟上面一樣
-                  height: 45,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Color.fromARGB(255, 97, 85, 67), width: 2.0),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      dropdownColor: Colors.orange.shade50, // 點開後的選單背景色（淡橘色）
-                      value: _selectedCategory,
-                      isExpanded: true,
-                      onChanged: (val) => setState(() => _selectedCategory = val!),
-                      items: _categories.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-                    ),
-                  ),
-                ),
-              ],
-            )
-          ),
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Row(
-              children: [
-                const SizedBox(width: 90, child: Text('消費日期：', style: TextStyle(fontSize: 16))), // 固定標籤寬度
-
-                OutlinedButton.icon(
-                  onPressed: () => _pickDate(context),
-                  icon: const Icon(Icons.calendar_today),
-                  label: Text("${_selectedDate.toLocal()}".split(' ')[0]), // 只顯示 yyyy-mm-dd
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(280, 45), // 調整到跟上面一樣
-                    side: const BorderSide(color: Color.fromARGB(255, 97, 85, 67), width: 2.0),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.send),
-            onPressed: _addRecord,
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 
 // TextDecoration.underline：文字底線
