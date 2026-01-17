@@ -16,8 +16,8 @@ class _FeedPiggyPageState extends State<FeedPiggyPage> {
   // 建立控制器，用來抓取輸入框裡的文字
   final TextEditingController _textController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
-  final Set<String> _categories = {'餐飲', '交通', '購物', '娛樂', '其他'};
-  final Set<String> _members = {'自作自受', '熊叔叔', '宋', '林語晞'};
+  
+  
   DateTime _selectedDate = DateTime.now(); // 預設為今天
   String _selectedCategory = '餐飲';
   String _selectedMember = '自作自受';
@@ -61,6 +61,7 @@ class _FeedPiggyPageState extends State<FeedPiggyPage> {
       
       // 存完後清空輸入框，方便下一筆輸入
       _textController.clear();
+      _selectedCategory = '餐飲';
       _amountController.clear();
     });
 
@@ -79,33 +80,9 @@ class _FeedPiggyPageState extends State<FeedPiggyPage> {
       body: Column(
         children: [
           // 上方輸入區
+          
           Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
-              children: [
-                const SizedBox(width: 90, child: Text('消費項目：', style: TextStyle(fontSize: 16))), // 固定標籤寬度
-                SizedBox(
-                  width: 280, // 【精確調整寬度】
-                  height: 45, // 【精確調整高度】
-                  child: TextField(
-                    controller: _textController,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      hintText: '例如：好吃蘿蔔糕',
-                      hintStyle: TextStyle(color: Colors.black.withOpacity(0.5),), // 50% 的透明度
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color.fromARGB(255, 97, 85, 67), width: 2.0),
-                      ),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
             child: Row(
               children: [
                 const SizedBox(width: 90, child: Text('消費類別：',style: TextStyle(fontSize: 16))),
@@ -123,7 +100,7 @@ class _FeedPiggyPageState extends State<FeedPiggyPage> {
                       value: _selectedCategory,
                       isExpanded: true,
                       onChanged: (val) => setState(() => _selectedCategory = val!),
-                      items: _categories.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+                      items: categories.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
                     ),
                   ),
                 ),
@@ -131,7 +108,37 @@ class _FeedPiggyPageState extends State<FeedPiggyPage> {
             )
           ),
           Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+            child: Row(
+              children: [
+                const SizedBox(width: 90, child: Text('消費項目：', style: TextStyle(fontSize: 16))), // 固定標籤寬度
+                SizedBox(
+                  width: 280, // 【精確調整寬度】
+                  height: 45, // 【精確調整高度】
+                  child: TextField(
+                    controller: _textController,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      hintText: '例如：好吃蘿蔔糕',
+                      hintStyle: TextStyle(color: Colors.black.withOpacity(0.5),), // 50% 的透明度
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color.fromARGB(255, 97, 85, 67), width: 2.0),
+                      ),
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(
+                        // 從 Map 中抓取對應圖標，如果找不到則預設顯示 paid
+                        categoryIcons[_selectedCategory] ?? Icons.paid, 
+                        color: const Color.fromARGB(255, 97, 85, 67),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
             child: Row(
               children: [
                 const SizedBox(width: 90, child: Text('消費金額：', style: TextStyle(fontSize: 16))), // 固定標籤寬度
@@ -143,12 +150,14 @@ class _FeedPiggyPageState extends State<FeedPiggyPage> {
                     decoration: InputDecoration(
                       isDense: true,
                       contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      hintText: '不要花太多錢啦',
-                      hintStyle: TextStyle(color: Colors.black.withOpacity(0.5),), // 50% 的透明度
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Color.fromARGB(255, 97, 85, 67), width: 2.0),
                       ),
                       border: OutlineInputBorder(),
+                      prefixIcon: Visibility(
+                        visible: true,
+                        child: Icon(Icons.paid, color: Color.fromARGB(255, 97, 85, 67)),
+                      ),
                     ),
                   ),
                 ),
@@ -156,7 +165,7 @@ class _FeedPiggyPageState extends State<FeedPiggyPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
             child: Row(
               children: [
                 const SizedBox(width: 90, child: Text('消費日期：', style: TextStyle(fontSize: 16))), // 固定標籤寬度
@@ -174,7 +183,7 @@ class _FeedPiggyPageState extends State<FeedPiggyPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
             child: Row(
               children: [
                 const SizedBox(width: 90, child: Text('要分錢嗎：',style: TextStyle(fontSize: 16))),
@@ -191,8 +200,9 @@ class _FeedPiggyPageState extends State<FeedPiggyPage> {
                       dropdownColor: Colors.orange.shade50, // 點開後的選單背景色（淡橘色）
                       value: _selectedMember,
                       isExpanded: true,
+                      icon: const Icon(Icons.pets, color: Color.fromARGB(255, 97, 85, 67)),
                       onChanged: (val) => setState(() => _selectedMember = val!),
-                      items: _members.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+                      items: members.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
                     ),
                   ),
                 ),
@@ -233,8 +243,8 @@ class _FeedPiggyPageState extends State<FeedPiggyPage> {
               height: 50,
               child: ElevatedButton.icon(
                 onPressed: _addRecord, // 呼叫剛才寫的存入函式
-                icon: const Icon(Icons.save),
-                label: const Text('存入消費紀錄', style: TextStyle(fontSize: 18)),
+                icon: const Icon(Icons.savings, size: 30.0,),
+                label: const Text('BABUY 好餓', style: TextStyle(fontSize: 18)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 165, 152, 131), // 橘色系按鈕
                   foregroundColor: Colors.white,

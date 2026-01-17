@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart'; // 匯入 Flutter 套件
 import 'feedPage.dart';
 import 'historyPage.dart';
+import 'splitPage.dart';
 
 // main function
 void main() {
@@ -73,8 +74,8 @@ class _MyHomePageState extends State<HomePage> {
             //   height: 200,       // 設定高度
             //   fit: BoxFit.contain, // 讓圖片完整顯示在框框內
             // ),
-            Text('準備好要開始記帳了嗎?'),
-            Text('start to feed your piggy bank'),
+            Text('準備好要開始記帳了嗎?', style: TextStyle(fontSize: 20),),
+            Text('Start to feed your piggy bank'),
             // Text('$counter', style: Theme.of(context).textTheme.headlineMedium,),
             ElevatedButton(
               onPressed: () {
@@ -85,12 +86,13 @@ class _MyHomePageState extends State<HomePage> {
                 );
               },            
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(223, 248, 197, 197), // 橘色系按鈕
+                backgroundColor: const Color.fromARGB(223, 179, 138, 138), // 橘色系按鈕
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('點我開始餵BABUY吃', style: TextStyle(fontSize: 18),),
+              child: const Text('點我餵BABUY吃飼料', style: TextStyle(fontSize: 18),),
             ),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
                 // 【關鍵代碼】：切換到紀錄頁面
@@ -104,7 +106,23 @@ class _MyHomePageState extends State<HomePage> {
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('點我看BABUY吃過的', style: TextStyle(fontSize: 18),),
+              child: const Text('點我看BABUY的飼料', style: TextStyle(fontSize: 18),),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                // 【關鍵代碼】：切換到分錢頁面
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SplitPage(title: 'Split Page')),
+                );
+              },            
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 222, 203, 132), // 橘色系按鈕
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text('點我看BABUY分飼料', style: TextStyle(fontSize: 18),),
             ),
           ],
         ),
